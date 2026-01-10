@@ -1,298 +1,268 @@
 <template>
-  <div>
-    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Gestión de Tareas
-        </h1>
-        <p class="text-gray-600 dark:text-gray-400">
-          Total: {{ filteredTasks.length }} tareas
-        </p>
-      </div>
+  <NuxtLayout name="default">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem;">
       
-      <button
-        @click="openCreateModal"
-        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 duration-200"
-      >
-        ➕ Nueva Tarea
-      </button>
-    </div>
-
-    <!-- Filtros -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">🔍 Filtros</h3>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Buscar
-          </label>
-          <input
-            v-model="filters.search"
-            type="text"
-            placeholder="Buscar por título..."
-            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                   bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                   focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Estado
-          </label>
-          <select
-            v-model="filters.status"
-            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                   bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                   focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Todos</option>
-            <option value="pending">Pendiente</option>
-            <option value="in-progress">En Progreso</option>
-            <option value="completed">Completada</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Prioridad
-          </label>
-          <select
-            v-model="filters.priority"
-            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                   bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                   focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Todas</option>
-            <option value="low">Baja</option>
-            <option value="medium">Media</option>
-            <option value="high">Alta</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabla de tareas -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Título
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">
-                Estado
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden lg:table-cell">
-                Prioridad
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden lg:table-cell">
-                Fecha límite
-              </th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-            <tr
-              v-for="task in paginatedTasks"
-              :key="task.id"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            >
-              <td class="px-6 py-4">
-                <div class="text-sm font-medium text-gray-900 dark:text-white">
-                  {{ task.title }}
-                </div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ task.description }}
-                </div>
-              </td>
-              <td class="px-6 py-4 hidden md:table-cell">
-                <span :class="getStatusClass(task.status)" class="px-3 py-1 rounded-full text-xs font-semibold">
-                  {{ getStatusLabel(task.status) }}
-                </span>
-              </td>
-              <td class="px-6 py-4 hidden lg:table-cell">
-                <span :class="getPriorityClass(task.priority)" class="px-3 py-1 rounded-full text-xs font-semibold">
-                  {{ getPriorityLabel(task.priority) }}
-                </span>
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 hidden lg:table-cell">
-                {{ formatDate(task.dueDate) }}
-              </td>
-              <td class="px-6 py-4 text-right text-sm font-medium space-x-2">
-                <button
-                  @click="openEditModal(task)"
-                  class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                >
-                  ✏️
-                </button>
-                <button
-                  @click="handleDeleteTask(task.id)"
-                  class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                >
-                  🗑️
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Paginación -->
-      <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-600">
-        <div class="text-sm text-gray-700 dark:text-gray-300">
-          Mostrando {{ startIndex + 1 }} a {{ Math.min(endIndex, filteredTasks.length) }} de {{ filteredTasks.length }} resultados
-        </div>
+      <!-- Header con navegación -->
+      <div style="margin-bottom: 2rem;">
+        <NuxtLink 
+          to="/dashboard" 
+          style="display: inline-flex; align-items: center; gap: 0.5rem; color: #2563eb; text-decoration: none; margin-bottom: 1rem; font-weight: 500;"
+        >
+          ← Volver al Dashboard
+        </NuxtLink>
         
-        <div class="flex space-x-2">
-          <button
-            @click="currentPage--"
-            :disabled="currentPage === 1"
-            :class="[
-              'px-4 py-2 rounded-lg transition-colors',
-              currentPage === 1
-                ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
-            ]"
-          >
-            Anterior
-          </button>
-          
-          <span class="px-4 py-2 text-gray-700 dark:text-gray-300">
-            Página {{ currentPage }} de {{ totalPages }}
-          </span>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h1 class="text-3xl font-bold mb-2">Gestión de Tareas</h1>
+            <p style="color: #6b7280;">Total: {{ filteredTasks.length }} tareas</p>
+          </div>
           
           <button
-            @click="currentPage++"
-            :disabled="currentPage === totalPages"
-            :class="[
-              'px-4 py-2 rounded-lg transition-colors',
-              currentPage === totalPages
-                ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
-            ]"
+            @click="openCreateModal"
+            style="padding: 0.75rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
           >
-            Siguiente
+            ➕ Nueva Tarea
           </button>
         </div>
       </div>
-    </div>
 
-    <!-- Modal crear/editar -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      @click.self="closeModal"
-    >
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-            {{ isEditing ? '✏️ Editar Tarea' : '➕ Nueva Tarea' }}
-          </h2>
+      <!-- Filtros -->
+      <div class="card mb-6">
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">🔍 Filtros</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Buscar</label>
+            <input
+              v-model="filters.search"
+              type="text"
+              placeholder="Buscar por título..."
+              style="width: 100%;"
+            />
+          </div>
 
-          <form @submit.prevent="saveTask" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Título *
-              </label>
-              <input
+          <div>
+            <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Estado</label>
+            <select v-model="filters.status" style="width: 100%;">
+              <option value="">Todos</option>
+              <option value="pending">Pendiente</option>
+              <option value="in-progress">En Progreso</option>
+              <option value="completed">Completada</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Prioridad</label>
+            <select v-model="filters.priority" style="width: 100%;">
+              <option value="">Todas</option>
+              <option value="low">Baja</option>
+              <option value="medium">Media</option>
+              <option value="high">Alta</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de tareas -->
+      <div class="card" style="overflow: hidden;">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #f9fafb;">
+                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; color: #6b7280;">
+                  Título
+                </th>
+                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; color: #6b7280;">
+                  Estado
+                </th>
+                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; color: #6b7280;">
+                  Prioridad
+                </th>
+                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; color: #6b7280;">
+                  Fecha límite
+                </th>
+                <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; color: #6b7280;">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="task in paginatedTasks"
+                :key="task.id"
+                style="border-top: 1px solid #e5e7eb; transition: background-color 0.2s;"
+              >
+                <td style="padding: 1rem 1.5rem;">
+                  <div style="font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">
+                    {{ task.title }}
+                  </div>
+                  <div style="font-size: 0.875rem; color: #6b7280;">
+                    {{ task.description }}
+                  </div>
+                </td>
+                <td style="padding: 1rem 1.5rem;">
+                  <span :class="getStatusClass(task.status)">
+                    {{ getStatusLabel(task.status) }}
+                  </span>
+                </td>
+                <td style="padding: 1rem 1.5rem;">
+                  <span :class="getPriorityClass(task.priority)">
+                    {{ getPriorityLabel(task.priority) }}
+                  </span>
+                </td>
+                <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: #6b7280;">
+                  {{ formatDate(task.dueDate) }}
+                </td>
+                <td style="padding: 1rem 1.5rem; text-align: right;">
+                  <button
+                    @click="openEditModal(task)"
+                    style="background: none; border: none; cursor: pointer; font-size: 1.25rem; margin-right: 0.5rem;"
+                    title="Editar"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    @click="handleDeleteTask(task.id)"
+                    style="background: none; border: none; cursor: pointer; font-size: 1.25rem;"
+                    title="Eliminar"
+                  >
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación mejorada -->
+        <div style="background: #f9fafb; padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <div style="font-size: 0.875rem; color: #6b7280;">
+            Mostrando {{ startIndex + 1 }} a {{ Math.min(endIndex, filteredTasks.length) }} de {{ filteredTasks.length }} resultados
+          </div>
+          
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button
+              @click="currentPage--"
+              :disabled="currentPage === 1"
+              style="padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #d1d5db; background: white; cursor: pointer; font-weight: 500;"
+              :style="currentPage === 1 ? 'opacity: 0.5; cursor: not-allowed;' : ''"
+            >
+              ← Anterior
+            </button>
+            
+            <span style="padding: 0.5rem 1rem; font-weight: 500;">
+              Página {{ currentPage }} de {{ totalPages }}
+            </span>
+            
+            <button
+              @click="currentPage++"
+              :disabled="currentPage === totalPages"
+              style="padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #d1d5db; background: white; cursor: pointer; font-weight: 500;"
+              :style="currentPage === totalPages ? 'opacity: 0.5; cursor: not-allowed;' : ''"
+            >
+              Siguiente →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal crear/editar -->
+      <div
+        v-if="showModal"
+        class="modal-overlay"
+        @click.self="closeModal"
+      >
+        <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+          <div class="p-6">
+            <h2 class="text-2xl font-bold mb-6">
+              {{ isEditing ? '✏️ Editar Tarea' : '➕ Nueva Tarea' }}
+            </h2>
+
+            <form @submit.prevent="saveTask" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Campo Título -->
+                <div>
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">
+                  Título *
+                </label>
+               <input
                 v-model="formData.title"
                 type="text"
+                placeholder="Ej: Completar informe mensual"
                 required
-                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                       focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem;"
+    />
+  </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Descripción *
-              </label>
-              <textarea
-                v-model="formData.description"
-                required
-                rows="3"
-                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                       focus:ring-2 focus:ring-blue-500"
-              ></textarea>
-            </div>
+               <!-- Campo Descripción -->
+  <div>
+    <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">
+      Descripción *
+    </label>
+    <textarea
+      v-model="formData.description"
+      placeholder="Describe la tarea..."
+      required
+      rows="3"
+      style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem; resize: vertical;"
+    ></textarea>
+  </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Estado *
-                </label>
-                <select
-                  v-model="formData.status"
-                  required
-                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                         focus:ring-2 focus:ring-blue-500"
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">
+                    Estado *
+                  </label>
+                  <select v-model="formData.status" required>
+                    <option value="pending">Pendiente</option>
+                    <option value="in-progress">En Progreso</option>
+                    <option value="completed">Completada</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">
+                    Prioridad *
+                  </label>
+                  <select v-model="formData.priority" required>
+                    <option value="low">Baja</option>
+                    <option value="medium">Media</option>
+                    <option value="high">Alta</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">
+                    Fecha límite *
+                  </label>
+                  <input
+                    v-model="formData.dueDate"
+                    type="date"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 1rem; padding-top: 1rem;">
+                <button
+                  type="submit"
+                  style="flex: 1; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;"
                 >
-                  <option value="pending">Pendiente</option>
-                  <option value="in-progress">En Progreso</option>
-                  <option value="completed">Completada</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Prioridad *
-                </label>
-                <select
-                  v-model="formData.priority"
-                  required
-                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                         focus:ring-2 focus:ring-blue-500"
+                  {{ isEditing ? 'Actualizar' : 'Crear' }}
+                </button>
+                <button
+                  type="button"
+                  @click="closeModal"
+                  style="flex: 1; padding: 0.75rem; background: #6b7280; color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;"
                 >
-                  <option value="low">Baja</option>
-                  <option value="medium">Media</option>
-                  <option value="high">Alta</option>
-                </select>
+                  Cancelar
+                </button>
               </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Fecha límite *
-                </label>
-                <input
-                  v-model="formData.dueDate"
-                  type="date"
-                  required
-                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                         focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-
-            <div class="flex space-x-4 pt-4">
-              <button
-                type="submit"
-                class="flex-1 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-              >
-                {{ isEditing ? 'Actualizar' : 'Crear' }}
-              </button>
-              <button
-                type="button"
-                @click="closeModal"
-                class="flex-1 py-3 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors font-semibold"
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -310,18 +280,15 @@ onMounted(() => {
   loadTasks()
 })
 
-// Filtros
 const filters = reactive({
   search: '',
   status: '',
   priority: ''
 })
 
-// Paginación
 const currentPage = ref(1)
 const itemsPerPage = 5
 
-// Tareas filtradas
 const filteredTasks = computed(() => {
   let filtered = tasks.value
 
@@ -343,13 +310,11 @@ const filteredTasks = computed(() => {
   return filtered
 })
 
-// Paginación calculada
 const totalPages = computed(() => Math.ceil(filteredTasks.value.length / itemsPerPage))
 const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage)
 const endIndex = computed(() => startIndex.value + itemsPerPage)
 const paginatedTasks = computed(() => filteredTasks.value.slice(startIndex.value, endIndex.value))
 
-// Modal
 const showModal = ref(false)
 const isEditing = ref(false)
 const editingId = ref('')
@@ -412,7 +377,6 @@ const handleDeleteTask = (id: string) => {
   }
 }
 
-// Funciones auxiliares
 const formatDate = (date: string) => {
   try {
     return format(new Date(date), 'dd/MM/yyyy')

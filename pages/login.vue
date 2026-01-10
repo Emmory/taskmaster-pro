@@ -1,71 +1,71 @@
 <template>
-  <NuxtLayout name="auth">
-    <div class="w-full max-w-md">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8">
-        <div class="text-center mb-8">
-          <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            📋 TaskMaster Pro
-          </h1>
-          <p class="text-gray-600 dark:text-gray-400">
-            Inicia sesión para continuar
-          </p>
-        </div>
-
-        <form @submit.prevent="handleLogin" class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Correo electrónico
-            </label>
-            <input
-              v-model="email"
-              type="email"
-              required
-              placeholder="tu@email.com"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                     transition-all"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Contraseña
-            </label>
-            <input
-              v-model="password"
-              type="password"
-              required
-              placeholder="••••••••"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 
-                     bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                     transition-all"
-            />
-          </div>
-
-          <div v-if="error" class="p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg text-sm">
-            {{ error }}
-          </div>
-
-          <button
-            type="submit"
-            class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold 
-                   rounded-lg transition-colors shadow-lg hover:shadow-xl
-                   transform hover:scale-105 duration-200"
-          >
-            Iniciar Sesión
-          </button>
-        </form>
-
-        <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-          <p class="text-sm text-blue-800 dark:text-blue-200 text-center">
-            💡 Usa cualquier email y contraseña para entrar
-          </p>
-        </div>
+  <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1rem;">
+    <div style="background: white; padding: 2.5rem; border-radius: 1rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); width: 100%; max-width: 420px;">
+      
+      <!-- Logo y título -->
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">📋</div>
+        <h1 style="font-size: 1.875rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">
+          TaskMaster Pro
+        </h1>
+        <p style="color: #6b7280; font-size: 0.875rem;">
+          Inicia sesión para continuar
+        </p>
       </div>
+
+      <!-- Formulario -->
+      <form @submit.prevent="handleLogin" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        
+        <!-- Email -->
+        <div>
+          <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+            Correo electrónico
+          </label>
+          <input
+            v-model="email"
+            type="email"
+            placeholder="tu@email.com"
+            required
+            style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem; transition: all 0.2s;"
+          />
+        </div>
+
+        <!-- Contraseña -->
+        <div>
+          <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+            Contraseña
+          </label>
+          <input
+            v-model="password"
+            type="password"
+            placeholder="••••••••"
+            required
+            style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem; transition: all 0.2s;"
+          />
+        </div>
+
+        <!-- Error -->
+        <div v-if="error" style="padding: 0.75rem; background: #fee2e2; border: 1px solid #fecaca; border-radius: 0.5rem; color: #dc2626; font-size: 0.875rem;">
+          {{ error }}
+        </div>
+
+        <!-- Botón -->
+        <button
+          type="submit"
+          style="width: 100%; padding: 0.875rem; background: #2563eb; color: white; border: none; border-radius: 0.5rem; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.2s;"
+        >
+          Iniciar sesión
+        </button>
+
+        <!-- Nota -->
+        <div style="text-align: center; margin-top: 0.5rem;">
+          <p style="font-size: 0.75rem; color: #6b7280; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            💡 Usa cualquier correo electrónico y contraseña para entrar
+          </p>
+        </div>
+      </form>
     </div>
-  </NuxtLayout>
+  </div>
 </template>
 
 <script setup lang="ts">

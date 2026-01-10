@@ -1,5 +1,6 @@
 <template>
-  <div class="container py-8">
+  <NuxtLayout name="default">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem;"></div>
     <div class="mb-8">
       <h1 class="text-3xl font-bold mb-2">Dashboard</h1>
       <p>Bienvenido, {{ user?.name }}</p>
@@ -101,7 +102,7 @@
         Ver todas las tareas
       </NuxtLink>
     </div>
-  </div>
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
