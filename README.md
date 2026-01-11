@@ -192,7 +192,8 @@ El archivo `ARQUITECTURA-MONOREPO.md` presenta el diseño teórico de un monorep
 **Implementación práctica:**  
 Se desarrolló un monorepo funcional con Nx que demuestra la arquitectura propuesta.
 
-🔗 **Repositorio demo:** [github.com/Emmory/monorepo-demo](https://github.com/Emmory/monorepo-demo)
+🔗 **Repositorio:** [github.com/Emmory/monorepo-demo](https://github.com/Emmory/monorepo-demo)  
+🔗 **Demo en vivo:** [monorepo-demo-ui-zeta.vercel.app](https://monorepo-demo-ui-zeta.vercel.app)
 
 Este repositorio incluye:
 - ✅ 4 paquetes compilados y funcionando (ui, utils, interfaces, settings)
@@ -219,7 +220,7 @@ npm run preview  # Preview del build
 
 ## 🚀 Despliegue
 
-La aplicación está optimizada para despliegue en:
+La aplicación está desplegada en Vercel y optimizada para:
 - Vercel
 - Netlify
 - Cloudflare Pages
