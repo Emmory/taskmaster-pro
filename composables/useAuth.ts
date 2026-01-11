@@ -1,5 +1,6 @@
+import type { User } from '@/types'
 export const useAuth = () => {
-  const user = useState<any>('user', () => null)
+  const user = useState<User | null>('user', () => null)
   const isAuthenticated = computed(() => !!user.value)
 
   const login = (email: string, password: string) => {

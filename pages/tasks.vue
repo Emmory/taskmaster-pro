@@ -267,7 +267,7 @@
 
 <script setup lang="ts">
 import { format } from 'date-fns'
-import type { Task } from '@/types'
+import type { Task, TaskCreate } from '@/types'
 
 definePageMeta({
   middleware: 'auth'
@@ -319,7 +319,7 @@ const showModal = ref(false)
 const isEditing = ref(false)
 const editingId = ref('')
 
-const formData = reactive({
+const formData = reactive<TaskCreate>({
   title: '',
   description: '',
   status: 'pending' as 'pending' | 'in-progress' | 'completed',

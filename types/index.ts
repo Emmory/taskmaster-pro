@@ -16,6 +16,8 @@ export interface Task {
   userId: string
 }
 
+export type TaskCreate = Omit<Task, 'id' | 'createdAt'>
+
 export interface AuthState {
   user: User | null
   isAuthenticated: boolean
