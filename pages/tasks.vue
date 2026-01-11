@@ -53,9 +53,9 @@
         </div>
       </div>
 
-      <!-- Table -->
-      <div class="rounded-xl shadow-lg overflow-hidden transition-colors" :class="isDark ? 'bg-gray-800' : 'bg-white'">
-        <div class="w-full min-w-[800px]">
+      <!-- Table - Desktop -->
+      <div class="hidden md:block rounded-xl shadow-lg overflow-hidden transition-colors" :class="isDark ? 'bg-gray-800' : 'bg-white'">
+        <div class="overflow-x-auto">
           <table class="w-full">
             <thead class="transition-colors" :class="isDark ? 'bg-gray-700' : 'bg-gray-50'">
               <tr>
@@ -106,7 +106,7 @@
           </table>
         </div>
 
-        <!-- Pagination -->
+        <!-- Pagination Desktop -->
         <div class="px-6 py-4 border-t flex justify-between items-center" :class="isDark ? 'border-gray-700' : 'border-gray-200'">
           <div class="text-sm opacity-75">
             Mostrando {{ startIndex + 1 }} - {{ Math.min(endIndex, filteredTasks.length) }} de {{ filteredTasks.length }} tareas
@@ -127,6 +127,78 @@
               :class="isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'"
             >
               Siguiente
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cards - Mobile -->
+      <div class="md:hidden space-y-4">
+        <div 
+          v-for="task in paginatedTasks" 
+          :key="task.id"
+          class="rounded-xl shadow-lg p-4 transition-colors"
+          :class="isDark ? 'bg-gray-800' : 'bg-white'"
+        >
+          <!-- Title & Description -->
+          <div class="mb-3">
+            <h3 class="font-bold text-lg mb-1">{{ task.title }}</h3>
+            <p class="text-sm opacity-75">{{ task.description }}</p>
+          </div>
+
+          <!-- Status & Priority -->
+          <div class="flex gap-2 mb-3">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold" :class="getStatusClass(task.status)">
+              {{ getStatusText(task.status) }}
+            </span>
+            <span class="px-3 py-1 rounded-full text-xs font-semibold" :class="getPriorityClass(task.priority)">
+              {{ getPriorityText(task.priority) }}
+            </span>
+          </div>
+
+          <!-- Date -->
+          <div class="text-sm opacity-75 mb-3">
+            📅 {{ formatTaskDate(task.dueDate) }}
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2 pt-3 border-t" :class="isDark ? 'border-gray-700' : 'border-gray-200'">
+            <button
+              @click="openEditModal(task)"
+              class="flex-1 px-4 py-2 rounded-lg font-semibold transition-colors bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              ✏️ Editar
+            </button>
+            <button
+              @click="confirmDelete(task.id)"
+              class="flex-1 px-4 py-2 rounded-lg font-semibold transition-colors bg-red-600 hover:bg-red-700 text-white"
+            >
+              🗑️ Eliminar
+            </button>
+          </div>
+        </div>
+
+        <!-- Pagination Mobile -->
+        <div class="flex justify-between items-center pt-4">
+          <div class="text-sm opacity-75">
+            {{ startIndex + 1 }}-{{ Math.min(endIndex, filteredTasks.length) }} de {{ filteredTasks.length }}
+          </div>
+          <div class="flex gap-2">
+            <button
+              @click="currentPage--"
+              :disabled="currentPage === 1"
+              class="px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+              :class="isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'"
+            >
+              ←
+            </button>
+            <button
+              @click="currentPage++"
+              :disabled="currentPage >= totalPages"
+              class="px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+              :class="isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'"
+            >
+              →
             </button>
           </div>
         </div>
@@ -231,6 +303,7 @@ definePageMeta({
   middleware: 'auth',
   layout: 'default'
 })
+
 const { tasks, addTask, updateTask, deleteTask } = useTasks()
 const isDark = useState('isDark')
 
