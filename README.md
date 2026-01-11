@@ -65,7 +65,7 @@ taskmaster-pro/
 ### Instalación
 ```bash
 # Clonar el repositorio
-git clone https://github.com/TU-USUARIO/taskmaster-pro.git
+git clone https://github.com/Emmory/taskmaster-pro.git
 
 # Entrar al directorio
 cd taskmaster-pro
@@ -152,11 +152,7 @@ navigator.geolocation.getCurrentPosition(
 ## 📝 Documentación Técnica
 
 ### Caso Real
-El archivo `CASO-REAL.md` documenta un caso técnico complejo de optimización de rendimiento en un dashboard de analytics, incluyendo:
-- Análisis del problema
-- Solución arquitectónica
-- Implementación técnica
-- Métricas de impacto
+El archivo `CASO-REAL.md` documenta un caso técnico.
 
 ### Arquitectura Monorepo
 El archivo `ARQUITECTURA-MONOREPO.md` presenta el diseño de un monorepo escalable con Nx, detallando:
@@ -183,10 +179,7 @@ npm run preview  # Preview del build
 
 ## 👤 Autor
 
-**Emory de Cuadra**
+**Emmory Carias Gonzalez**
 - Candidato para: Desarrollador Senior Frontend
 - Fecha: Enero 2026
 
-## 📄 Licencia
-
-Este proyecto fue creado como parte de una evaluación técnica.
