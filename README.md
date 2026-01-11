@@ -7,6 +7,14 @@
 
 Aplicación web completa de gestión de tareas desarrollada con Vue 3, Nuxt 3, TypeScript y Tailwind CSS como parte de la evaluación técnica para el puesto de Desarrollador Senior Frontend.
 
+## 🌐 Demo en Vivo
+
+**🔗 Aplicación desplegada:** [taskmaster-pro-six.vercel.app](https://taskmaster-pro-six.vercel.app)
+
+Prueba la aplicación sin necesidad de instalar nada. Usa cualquier email y contraseña para acceder.
+
+---
+
 ## 🚀 Características Implementadas
 
 ### Requisitos Técnicos
