@@ -1,188 +1,156 @@
 <template>
-  <NuxtLayout name="default">
-    <div style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem;"></div>
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold mb-2">Dashboard</h1>
-      <p>Bienvenido, {{ user?.name }}</p>
-    </div>
+  <div class="min-h-screen p-4 sm:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold mb-2">Dashboard</h1>
+        <p class="opacity-75">Bienvenido de nuevo, {{ user?.name }}! 👋</p>
+      </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div class="card">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm mb-2">Total de Tareas</p>
-            <p class="text-3xl font-bold">{{ stats.totalTasks }}</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="rounded-xl shadow-lg p-6 transition-colors" :class="isDark ? 'bg-gray-800' : 'bg-white'">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Total de Tareas</h3>
+            <span class="text-3xl">📋</span>
           </div>
-          <div class="text-4xl">📋</div>
+          <p class="text-4xl font-bold text-blue-600">{{ tasks.length }}</p>
+        </div>
+
+        <div class="rounded-xl shadow-lg p-6 transition-colors" :class="isDark ? 'bg-gray-800' : 'bg-white'">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Completadas</h3>
+            <span class="text-3xl">✅</span>
+          </div>
+          <p class="text-4xl font-bold text-green-600">{{ completedTasks.length }}</p>
+        </div>
+
+        <div class="rounded-xl shadow-lg p-6 transition-colors" :class="isDark ? 'bg-gray-800' : 'bg-white'">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Pendientes</h3>
+            <span class="text-3xl">⏳</span>
+          </div>
+          <p class="text-4xl font-bold text-orange-600">{{ pendingTasks.length }}</p>
         </div>
       </div>
 
-      <div class="card">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm mb-2">Completadas</p>
-            <p class="text-3xl font-bold">{{ stats.completedTasks }}</p>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="rounded-xl shadow-lg p-6 transition-colors" :class="isDark ? 'bg-gray-800' : 'bg-white'">
+          <h3 class="text-xl font-semibold mb-6">Estado de Tareas</h3>
+          <div class="flex justify-center">
+            <Doughnut :data="statusChartData" :options="chartOptions" />
           </div>
-          <div class="text-4xl">✅</div>
+        </div>
+
+        <div class="rounded-xl shadow-lg p-6 transition-colors" :class="isDark ? 'bg-gray-800' : 'bg-white'">
+          <h3 class="text-xl font-semibold mb-6">Prioridad de Tareas</h3>
+          <Bar :data="priorityChartData" :options="chartOptions" />
         </div>
       </div>
 
-      <div class="card">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm mb-2">En Progreso</p>
-            <p class="text-3xl font-bold">{{ stats.inProgressTasks }}</p>
-          </div>
-          <div class="text-4xl">⏳</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm mb-2">Pendientes</p>
-            <p class="text-3xl font-bold">{{ stats.pendingTasks }}</p>
-          </div>
-          <div class="text-4xl">📌</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-      <div class="card">
-        <h3 class="text-xl font-bold mb-4">Estado de Tareas</h3>
-        <div class="h-64">
-          <Doughnut :data="doughnutData" :options="chartOptions" />
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 class="text-xl font-bold mb-4">Prioridad de Tareas</h3>
-        <div class="h-64">
-          <Bar :data="barData" :options="chartOptions" />
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3 class="text-xl font-bold mb-4">Tu Ubicacion Actual</h3>
-      
-      <div v-if="loading" class="text-center py-8">
-        <div class="spinner"></div>
-        <p class="mt-4">Obteniendo ubicacion...</p>
-      </div>
-
-      <div v-else-if="location" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="p-4 bg-blue-600 text-white rounded-lg">
-            <p class="text-sm">Latitud</p>
-            <p class="text-lg font-semibold">{{ location.latitude }}</p>
-          </div>
-          <div class="p-4 bg-blue-600 text-white rounded-lg">
-            <p class="text-sm">Longitud</p>
-            <p class="text-lg font-semibold">{{ location.longitude }}</p>
-          </div>
+      <div class="rounded-xl shadow-lg p-6 transition-colors" :class="isDark ? 'bg-gray-800' : 'bg-white'">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-semibold">Tu Ubicación</h3>
+          <span class="text-2xl">📍</span>
         </div>
         
-        <a :href="mapsUrl" target="_blank" class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg">
-          Ver en Google Maps
-        </a>
-      </div>
-
-      <div v-else class="text-center py-8">
-        <p class="text-red-500 mb-4">{{ locationError }}</p>
-        <button @click="getLocation" class="px-6 py-2 bg-blue-600 text-white rounded-lg">
-          Intentar de nuevo
+        <button
+          v-if="!location"
+          @click="getLocation"
+          :disabled="loading"
+          class="px-6 py-3 rounded-lg font-semibold text-white transition-all"
+          :class="loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'"
+        >
+          {{ loading ? 'Obteniendo ubicación...' : 'Obtener mi ubicación' }}
         </button>
+
+        <div v-else class="space-y-2">
+          <p><strong>Latitud:</strong> {{ location.latitude }}</p>
+          <p><strong>Longitud:</strong> {{ location.longitude }}</p>
+          
+            <a :href="`https://www.google.com/maps?q=${location.latitude},${location.longitude}`"
+            target="_blank"
+            rel="noopener"
+            class="inline-block text-blue-600 hover:text-blue-700 font-medium"
+          >
+            Ver en Google Maps
+          </a>
+        </div>
+
+        <p v-if="error" class="mt-4 p-4 rounded-lg bg-red-100 border border-red-300 text-red-700">
+          {{ error }}
+        </p>
+      </div>
+
+      <div class="mt-8 text-center">
+        <NuxtLink
+          to="/tasks"
+          class="inline-block px-8 py-4 rounded-xl font-bold text-white text-lg transition-all shadow-lg bg-blue-600 hover:bg-blue-700"
+        >
+          Ver todas las tareas
+        </NuxtLink>
       </div>
     </div>
-
-    <div class="mt-8">
-      <NuxtLink to="/tasks" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold">
-        Ver todas las tareas
-      </NuxtLink>
-    </div>
-  </NuxtLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js'
 import { Doughnut, Bar } from 'vue-chartjs'
-import type { DashboardStats } from '@/types'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js'
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title)
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'auth',
+  layout: 'default'
 })
 
 const { user } = useAuth()
 const { tasks, completedTasks, pendingTasks, inProgressTasks, loadTasks } = useTasks()
+const isDark = useState('isDark')
+
+const location = ref<{ latitude: number; longitude: number } | null>(null)
+const loading = ref(false)
+const error = ref('')
 
 onMounted(() => {
   loadTasks()
-  getLocation()
 })
 
-const stats = computed<DashboardStats>(() => ({
-  totalTasks: tasks.value.length,
-  completedTasks: completedTasks.value.length,
-  pendingTasks: pendingTasks.value.length,
-  inProgressTasks: inProgressTasks.value.length
-}))
-
-const doughnutData = computed(() => ({
+const statusChartData = computed(() => ({
   labels: ['Completadas', 'En Progreso', 'Pendientes'],
   datasets: [{
-    data: [stats.value.completedTasks, stats.value.inProgressTasks, stats.value.pendingTasks],
-    backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-    borderWidth: 0
+    data: [completedTasks.value.length, inProgressTasks.value.length, pendingTasks.value.length],
+    backgroundColor: ['#10b981', '#3b82f6', '#f59e0b']
   }]
 }))
 
-const barData = computed(() => {
-  const priorities = { low: 0, medium: 0, high: 0 }
-  tasks.value.forEach(task => {
-    priorities[task.priority]++
-  })
+const priorityChartData = computed(() => {
+  const lowPriority = tasks.value.filter(t => t.priority === 'low').length
+  const mediumPriority = tasks.value.filter(t => t.priority === 'medium').length
+  const highPriority = tasks.value.filter(t => t.priority === 'high').length
 
   return {
     labels: ['Baja', 'Media', 'Alta'],
     datasets: [{
-      label: 'Tareas por prioridad',
-      data: [priorities.low, priorities.medium, priorities.high],
-      backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444']
+      label: 'Cantidad de Tareas',
+      data: [lowPriority, mediumPriority, highPriority],
+      backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
     }]
   }
 })
 
 const chartOptions = {
   responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'bottom' as const
-    }
-  }
+  maintainAspectRatio: true
 }
-
-const location = ref<{ latitude: number; longitude: number } | null>(null)
-const loading = ref(false)
-const locationError = ref('')
-
-const mapsUrl = computed(() => {
-  if (!location.value) return ''
-  return `https://www.google.com/maps?q=${location.value.latitude},${location.value.longitude}`
-})
 
 const getLocation = () => {
   if (!navigator.geolocation) {
-    locationError.value = 'Tu navegador no soporta geolocalizacion'
+    error.value = 'Geolocalización no soportada'
     return
   }
 
   loading.value = true
-  locationError.value = ''
+  error.value = ''
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
@@ -193,8 +161,8 @@ const getLocation = () => {
       loading.value = false
     },
     () => {
+      error.value = 'No se pudo obtener la ubicación'
       loading.value = false
-      locationError.value = 'No se pudo obtener tu ubicacion'
     }
   )
 }

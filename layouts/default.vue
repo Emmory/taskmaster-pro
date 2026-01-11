@@ -1,88 +1,121 @@
 <template>
-  <div class="min-h-screen">
-    <nav style="background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;">
-      <div style="max-width: 1400px; margin: 0 auto; padding: 0.5rem 1rem;">
-        <div style="display: flex; align-items: center; justify-content: space-between; min-height: 60px; flex-wrap: wrap; gap: 0.5rem;">
-          
-          <!-- Logo - Se oculta en móvil -->
-          <div style="flex-shrink: 0;">
-            <h1 style="font-size: clamp(1rem, 3vw, 1.5rem); font-weight: 700; color: #2563eb; white-space: nowrap;">
-              📋 TaskMaster Pro
-            </h1>
+  <div>
+    <!-- Navbar -->
+    <nav class="border-b transition-colors" :class="isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
+          <div class="flex items-center gap-3">
+            <div class="text-2xl">📋</div>
+            <h1 class="text-xl font-bold">TaskMaster Pro</h1>
           </div>
-          
-          <!-- Botones de la derecha -->
-          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-            
-            <!-- Botón Modo Oscuro -->
-            <button
+
+          <!-- Desktop Nav -->
+          <div class="hidden md:flex items-center gap-4">
+            <NuxtLink 
+              to="/dashboard" 
+              class="px-3 py-2 rounded-lg transition-colors hover:bg-opacity-10"
+              :class="isDark ? 'hover:bg-white' : 'hover:bg-gray-900'"
+            >
+              Dashboard
+            </NuxtLink>
+            <NuxtLink 
+              to="/tasks" 
+              class="px-3 py-2 rounded-lg transition-colors hover:bg-opacity-10"
+              :class="isDark ? 'hover:bg-white' : 'hover:bg-gray-900'"
+            >
+              Tareas
+            </NuxtLink>
+
+            <button 
               @click="toggleDarkMode"
-              style="
-                background: #f3f4f6; 
-                border: 2px solid #e5e7eb; 
-                cursor: pointer; 
-                width: 44px; 
-                height: 44px; 
-                display: flex; 
-                align-items: center; 
-                justify-content: center;
-                border-radius: 0.5rem;
-                flex-shrink: 0;
-                transition: all 0.2s;
-              "
-              title="Cambiar tema"
+              class="p-2 rounded-lg transition-colors hover:bg-opacity-10"
+              :class="isDark ? 'hover:bg-white' : 'hover:bg-gray-900'"
+              :title="isDark ? 'Modo claro' : 'Modo oscuro'"
             >
-              <span style="font-size: 20px;">{{ isDark ? '☀️' : '🌙' }}</span>
+              <span class="text-xl">{{ isDark ? '☀️' : '🌙' }}</span>
             </button>
-            
-            <!-- Info Usuario -->
-            <div 
-              v-if="user" 
-              style="
-                display: flex; 
-                align-items: center; 
-                gap: 0.5rem; 
-                padding: 0.4rem 0.75rem; 
-                background: #f9fafb; 
-                border-radius: 0.5rem;
-                flex-shrink: 0;
-              "
-            >
-              <img
-                v-if="user.avatar"
-                :src="user.avatar"
+
+            <div class="flex items-center gap-3">
+              <img 
+                v-if="user?.avatar" 
+                :src="user.avatar" 
                 :alt="user.name"
-                style="width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;"
+                class="w-8 h-8 rounded-full"
               />
-              <span style="font-weight: 500; font-size: 0.875rem; white-space: nowrap;">
-                {{ user.name }}
-              </span>
+              <span class="font-medium">{{ user?.name }}</span>
+              <button 
+                @click="handleLogout"
+                class="px-4 py-2 rounded-lg transition-colors"
+                :class="isDark ? 'bg-red-900 hover:bg-red-800 text-white' : 'bg-red-600 hover:bg-red-700 text-white'"
+              >
+                Salir
+              </button>
             </div>
-            
-            <!-- Botón Salir -->
-            <button
-              @click="handleLogout"
-              style="
-                background-color: #ef4444; 
-                color: white;
-                cursor: pointer; 
-                font-weight: 600;
-                padding: 0.5rem 1rem;
-                border-radius: 0.5rem;
-                border: none;
-                font-size: 0.875rem;
-                flex-shrink: 0;
-                transition: all 0.2s;
-              "
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button 
+            @click="mobileMenuOpen = !mobileMenuOpen"
+            class="md:hidden p-2 rounded-lg"
+          >
+            <span class="text-2xl">☰</span>
+          </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div v-if="mobileMenuOpen" class="md:hidden py-4 space-y-2">
+          <NuxtLink 
+            to="/dashboard" 
+            class="block px-4 py-2 rounded-lg transition-colors"
+            :class="isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'"
+            @click="mobileMenuOpen = false"
+          >
+            Dashboard
+          </NuxtLink>
+          <NuxtLink 
+            to="/tasks" 
+            class="block px-4 py-2 rounded-lg transition-colors"
+            :class="isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'"
+            @click="mobileMenuOpen = false"
+          >
+            Tareas
+          </NuxtLink>
+
+          <div class="flex items-center justify-between px-4 py-2">
+            <span>Modo {{ isDark ? 'claro' : 'oscuro' }}</span>
+            <button 
+              @click="toggleDarkMode"
+              class="p-2 rounded-lg"
             >
-              Salir
+              <span class="text-xl">{{ isDark ? '☀️' : '🌙' }}</span>
             </button>
           </div>
+
+          <div class="px-4 py-2 flex items-center gap-3">
+            <img 
+              v-if="user?.avatar" 
+              :src="user.avatar" 
+              :alt="user.name"
+              class="w-8 h-8 rounded-full"
+            />
+            <span class="font-medium">{{ user?.name }}</span>
+          </div>
+
+          <button 
+            @click="handleLogout"
+            class="w-full mx-4 px-4 py-2 rounded-lg text-white transition-colors"
+            :class="isDark ? 'bg-red-900 hover:bg-red-800' : 'bg-red-600 hover:bg-red-700'"
+            style="width: calc(100% - 2rem);"
+          >
+            Salir
+          </button>
         </div>
       </div>
     </nav>
-    
-    <main style="max-width: 1400px; margin: 0 auto; padding: 1.5rem 1rem;">
+
+    <!-- Page Content -->
+    <main>
       <slot />
     </main>
   </div>
@@ -91,34 +124,16 @@
 <script setup lang="ts">
 const { user, logout } = useAuth()
 const router = useRouter()
-const isDark = ref(false)
-
-onMounted(() => {
-  if (process.client) {
-    const savedTheme = localStorage.getItem('theme')
-    isDark.value = savedTheme === 'dark'
-    if (isDark.value) {
-      document.body.classList.add('dark')
-    }
-  }
-})
+const isDark = useState('isDark')
+const mobileMenuOpen = ref(false)
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value
-  
-  if (process.client) {
-    if (isDark.value) {
-      document.body.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.body.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-    }
-  }
 }
 
 const handleLogout = () => {
   logout()
   router.push('/login')
+  mobileMenuOpen.value = false
 }
 </script>
